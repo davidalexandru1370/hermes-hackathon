@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
+//import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -11,12 +11,14 @@ import BoxedLayout from "./core/components/BoxedLayout";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { DashboardPage } from "./pages/DashboardPage/DashboardPage";
+import  RegisterPage  from "./pages/RegisterPage/RegisterPage";
 // import { LoginPage } from "../src/pages/LoginPage/LoginPage";
 
 function App() {
   return (
     <Routes>
       <Route path="/dashboard" element = {<DashboardPage/>}></Route>
+      <Route path="/register" element = {<RegisterPage/>}></Route>
       <Route
         path="/"
         element={
@@ -96,15 +98,16 @@ function App() {
             >
               {("Sign in")}
             </Button>
-            {/* <Button style ={{backgroundColor: "lightblue"}}
+            <Button style ={{backgroundColor: "lightblue"}}
               component={RouterLink}
-              to={`/${process.env.PUBLIC_URL}/register`}
+              //to={`/${process.env.PUBLIC_URL}/register`}
+              to={`/register`}
               color="primary"
               fullWidth
               sx={{ mt: 2 }}
             >
-              {("Register")}
-            </Button> */}
+              {("Don't have an account? Sign up")}
+            </Button>
           </Box>
         </BoxedLayout>
       </Grid>
