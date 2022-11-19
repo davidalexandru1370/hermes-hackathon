@@ -1,4 +1,4 @@
-import { createTheme, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tab, Tabs, ThemeProvider, Toolbar, Typography } from '@mui/material'
+import { Avatar, createTheme, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tab, Tabs, ThemeProvider, Toolbar, Typography } from '@mui/material'
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import PersonIcon from '@mui/icons-material/Person';
@@ -11,6 +11,7 @@ import '../Fonts/Lato-Thin.ttf';
 import '../Fonts/Lato-Light.ttf';
 import '../Fonts/Lato-Bold.ttf';
 import '../Fonts/Lato-Black.ttf';
+import EmployesList from './EmployesList';
 
 const drawerWidth = 240
 
@@ -47,10 +48,11 @@ function TabPanel(props: TabPanelProps) {
     hidden = {value !== index}
     id = {`simple-tabpanel-${index}`}
     aria-labelledby={`simple-tab-${index}`}
+    style={{width: '80vw'}}
     {...other}
     >
       {value === index && (
-        <Box sx = {{p:3}}>
+        <Box sx = {{p:3, width: "100%"}} >
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -156,13 +158,20 @@ export default function SideBarMenu() {
       
       </Box>
       
+      <Box>
+        <Box>
+          <Avatar>
+            
+          </Avatar>
+        </Box>
 
-    <TabPanel value = {value} index={0}>
-      Testing 1
-    </TabPanel>
-    <TabPanel value = {value} index={1}>
-      Testing 122333
-    </TabPanel>
+        <TabPanel value = {value} index={0}>
+          <EmployesList />
+        </TabPanel>
+        <TabPanel value = {value} index={1}>
+          Testing 122333
+        </TabPanel>
+      </Box>
     </Box>
     {/* </ThemeProvider> */}
       </>
