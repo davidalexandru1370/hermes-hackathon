@@ -9,7 +9,7 @@ namespace backend.net.Controllers
     public class UserController : ControllerBase
     {
         private IUserService _userService;
-        
+
         public UserController(IUserService userService)
         {
             _userService = userService;
@@ -22,7 +22,7 @@ namespace backend.net.Controllers
                 _userService.Login(user);
             }
             catch (Exception exception)
-            {
+    {
                 return BadRequest(exception.Message);
             }
 
