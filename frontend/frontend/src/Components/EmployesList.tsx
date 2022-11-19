@@ -29,8 +29,8 @@ const EmployesList = () => {
   ];
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: 1000 }}>
-      <Table sx={{ minWidth: 650, maxWidth: 1000 }} aria-label="simple table">
+    <TableContainer component={Paper} sx={{ maxWidth: '100%' }}>
+      <Table sx={{ minWidth: 650, maxWidth: '100%' }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell></TableCell>
