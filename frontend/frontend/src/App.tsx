@@ -10,10 +10,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import BoxedLayout from "./core/components/BoxedLayout";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-
-
-
-import { LoginPage } from "../src/pages/LoginPage/LoginPage";
+// import { LoginPage } from "../src/pages/LoginPage/LoginPage";
 
 function App() {
   
