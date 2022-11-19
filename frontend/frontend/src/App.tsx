@@ -43,7 +43,7 @@ function App() {
                     setCounter(counter + 1);
                   }}
                 >
-                  0
+                  {counter}
                 </button>
                 <a
                   className="App-link"
