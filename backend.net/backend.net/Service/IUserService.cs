@@ -7,7 +7,7 @@ namespace backend.net.Service
     {
         public Task<User> Login(UserDto user);
 
-        public Task Register(UserDto user);
+        public Task<User> Register(UserDto user);
 
     }
 }

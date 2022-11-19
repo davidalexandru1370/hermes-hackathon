@@ -14,7 +14,6 @@ import { DashboardPage } from "./pages/DashboardPage/DashboardPage";
 // import { LoginPage } from "../src/pages/LoginPage/LoginPage";
 
 function App() {
-  
   return (
     <Routes>
       <Route path="/dashboard" element = {<DashboardPage/>}></Route>
