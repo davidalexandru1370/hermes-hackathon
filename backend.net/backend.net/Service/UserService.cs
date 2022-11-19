@@ -17,7 +17,7 @@ namespace backend.net.Service
         {
             var _user = _userRepository.GetByEmail(user.Email);
 
-            if (BCrypt.Net.BCrypt.Verify(user.Password,_user!.Password))
+            if (BCrypt.Net.BCrypt.Verify(user.Password, _user!.Password) == false)
             {
                 throw new Exception("Email does not exists!");
             }
@@ -25,10 +25,10 @@ namespace backend.net.Service
             return _user;
         }
 
-        public async Task Register(UserDto user)
+        public async Task<User> Register(UserDto user)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            await _userRepository.Add(user);
+            return await _userRepository.Add(user);
         }
 
     }
