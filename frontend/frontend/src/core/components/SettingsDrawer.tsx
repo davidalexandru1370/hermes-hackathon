@@ -8,7 +8,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
-// import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
 import { drawerWidth } from "../config/layout";
 import { useSettings } from "../contexts/SettingsProvider";
@@ -67,7 +67,7 @@ const SettingsDrawer = ({ onDrawerToggle, open }: SettingsDrawerProps) => {
       >
         <Typography variant="h5">{t("settings.drawer.title")}</Typography>
         <IconButton color="inherit" onClick={onDrawerToggle} edge="end">
-          {/* <CloseIcon /> */}
+          {<CloseIcon />}
         </IconButton>
       </Box>
       <Box sx={{ pl: 2, pr: 2 }}>
