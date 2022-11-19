@@ -1,17 +1,35 @@
-﻿using backend.net.Model.DTOs;
-
+﻿using backend.net.Model;
+using backend.net.Model.DTOs;
+using backend.net.Repository;
+using BCrypt;
 namespace backend.net.Service
 {
     public class UserService : IUserService
     {
-        public Task Login(UserDto user)
+        private IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository)
         {
-            throw new NotImplementedException();
+            _userRepository = userRepository;
         }
 
-        public Task Register(UserDto user)
+        public async Task<User> Login(UserDto user)
         {
-            throw new NotImplementedException();
+            var _user = _userRepository.GetByEmail(user.Email);
+
+            if (BCrypt.Net.BCrypt.Verify(user.Password,_user!.Password))
+            {
+                throw new Exception("Email does not exists!");
+            }
+
+            return _user;
         }
+
+        public async Task Register(UserDto user)
+        {
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            await _userRepository.Add(user);
+        }
+
     }
 }

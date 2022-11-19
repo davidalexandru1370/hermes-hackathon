@@ -1,4 +1,5 @@
 ﻿using backend.net.Model.DTOs;
+using backend.net.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.net.Controllers
@@ -7,15 +8,26 @@ namespace backend.net.Controllers
     [Route("api/[/controller]")]
     public class UserController : ControllerBase
     {
-
-        public UserController()
+        private IUserService _userService;
+        
+        public UserController(IUserService userService)
         {
-
+            _userService = userService;
         }
 
-        public async Task Login(UserDto user)
+        public async Task<IActionResult> Login(UserDto user)
         {
+            try
+            {
+                _userService.Login(user);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
 
+
+            return Ok()
         }
 
     }

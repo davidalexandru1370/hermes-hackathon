@@ -1,10 +1,11 @@
-﻿using backend.net.Model.DTOs;
+﻿using backend.net.Model;
+using backend.net.Model.DTOs;
 
 namespace backend.net.Service
 {
     public interface IUserService
     {
-        public Task Login(UserDto user);
+        public Task<User> Login(UserDto user);
 
         public Task Register(UserDto user);
 
