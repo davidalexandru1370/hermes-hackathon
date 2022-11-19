@@ -1,67 +1,116 @@
-import React, { useState, useEffect, useRef } from "react";
-import logo from "./logo.svg";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+//import LoadingButton from "@mui/material/lab/LoadingButton";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import BoxedLayout from "./core/components/BoxedLayout";
 import "./App.css";
-import { Button } from "@mui/material";
 import { Routes, Route } from "react-router-dom";
+
+
+
 import { LoginPage } from "../src/pages/LoginPage/LoginPage";
-import { DashboardPage } from "../src/pages/DashboardPage/DashboardPage";
 
 function App() {
-  const [myState, setMyState] = useState<string>("0");
-  const [counter, setCounter] = useState<number>(0);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    const getAllCharacters = async () => {
-      return fetch("https://anapioficeandfire.com/api/characters/583", {
-        method: "GET",
-      });
-    };
-
-    getAllCharacters()
-      .then(async (x) => {
-        return await x.json();
-      })
-      .then((c) => console.log(c.aliases));
-  }, [counter]);
-
+  
   return (
     <Routes>
       <Route
-        path="/home"
+        path="/login"
         element={
-          <>
-            <div className="App">
-              <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                  Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <Button>click</Button>
-                <button
-                  ref={buttonRef}
-                  onClick={() => {
-                    setCounter(counter + 1);
-                  }}
-                >
-                  {counter}
-                </button>
-                <a
-                  className="App-link"
-                  href="https://reactjs.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Learn React
-                </a>
-              </header>
-            </div>
-          </>
-        }
-      ></Route>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/dashboard" element = {<DashboardPage/>} />
-
-    </Routes>
+          <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid
+        item
+        xs={false}
+        sm={4}
+        md={7}
+        sx={{
+          backgroundImage: "url(./img/startup.svg)",
+          backgroundRepeat: "no-repeat",
+          bgcolor: "background.default",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      <Grid item xs={12} sm={8} md={5} component={Paper} square>
+        <BoxedLayout>
+          <Typography component="h1" variant="h5">
+            {("Sign in")}
+          </Typography>
+          <Box
+            component="form"
+            marginTop={3}
+            noValidate
+            // onSubmit={formik.handleSubmit}
+          >
+            <TextField
+              margin="normal"
+              variant="filled"
+              required
+              fullWidth
+              id="email"
+              label={("Email")}
+              name="email"
+              autoComplete="email"
+              autoFocus
+              // disabled={isLoggingIn}
+              // value={formik.values.email}
+              // onChange={formik.handleChange}
+              // error={formik.touched.email && Boolean(formik.errors.email)}
+              // helperText={formik.touched.email && formik.errors.email}
+            />
+            <TextField
+              margin="normal"
+              variant="filled"
+              required
+              fullWidth
+              name="password"
+              label={("Password")}
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              // disabled={isLoggingIn}
+              // value={formik.values.password}
+              // onChange={formik.handleChange}
+              // error={formik.touched.password && Boolean(formik.errors.password)}
+              // helperText={formik.touched.password && formik.errors.password}
+            />
+            <Box sx={{ textAlign: "right" }}>
+              <Link
+                component={RouterLink}
+                to={`/${process.env.PUBLIC_URL}/forgot-password`}
+                variant="body2"
+              >
+                {("I forgot my password")}
+              </Link>
+            </Box>
+            <Button
+              type="submit"
+              fullWidth
+              // loading={isLoggingIn}
+              variant="contained"
+              sx={{ mt: 3 }}
+            >
+              {("Sign in")}
+            </Button>
+            <Button style ={{backgroundColor: "lightblue"}}
+              component={RouterLink}
+              to={`/${process.env.PUBLIC_URL}/register`}
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              {("Register")}
+            </Button>
+          </Box>
+        </BoxedLayout>
+      </Grid>
+    </Grid> } ></Route>
+      </Routes>
   );
 }
 
