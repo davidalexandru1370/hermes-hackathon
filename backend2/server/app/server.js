@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "5MB" }));
 app.use(bodyParser.json({ limit: "5MB" }));
 
 const port = process.env.PORT || 3000;
-require("../routes")(app);
+require("./routes")(app);
 
 
 app.listen(port, () => {
