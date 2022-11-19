@@ -10,12 +10,14 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import BoxedLayout from "./core/components/BoxedLayout";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import { DashboardPage } from "./pages/DashboardPage/DashboardPage";
 // import { LoginPage } from "../src/pages/LoginPage/LoginPage";
 
 function App() {
   
   return (
     <Routes>
+      <Route path="/dashboard" element = {<DashboardPage/>}></Route>
       <Route
         path="/login"
         element={
