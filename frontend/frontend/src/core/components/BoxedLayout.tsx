@@ -8,7 +8,7 @@ import Toolbar from "@mui/material/Toolbar";
 // import SettingsIcon from "@material-ui/icons/Settings";
 import React, { useState } from "react";
 import Logo from "./Logo";
-// import SettingsDrawer from "./SettingsDrawer";
+import SettingsDrawer from "./SettingsDrawer";
 
 type BoxedLayoutProps = {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ const BoxedLayout = ({ children }: BoxedLayoutProps) => {
       <GlobalStyles
         styles={{ body: { backgroundColor: theme.palette.background.paper } }}
       />
-      <AppBar color="transparent" position="relative">
+      {/* <AppBar color="transparent" position="relative">
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton
@@ -35,25 +35,26 @@ const BoxedLayout = ({ children }: BoxedLayoutProps) => {
             component="span"
             onClick={handleSettingsToggle}
           >
-            {/* <SettingsIcon /> */}
+            <SettingsIcon />
           </IconButton>
         </Toolbar>
-      </AppBar>
+      </AppBar> */}
       <Container component="main" maxWidth="xs" sx={{ mt: 6 }}>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center"
           }}
         >
           <Logo sx={{ mb: 2 }} />
           {children}
           <Box>
-            {/* <SettingsDrawer
+            <SettingsDrawer
               onDrawerToggle={handleSettingsToggle}
               open={settingsOpen}
-            /> */}
+            />
           </Box>
         </Box>
       </Container>
