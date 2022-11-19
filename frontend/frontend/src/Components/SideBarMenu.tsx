@@ -1,9 +1,10 @@
-import { Avatar, createTheme, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tab, Tabs, ThemeProvider, Toolbar, Typography } from '@mui/material'
+import { getFirestore, collection, getDocs, setDoc, getDoc, doc,deleteDoc, addDoc } from 'firebase/firestore/lite';
+import { Avatar, Button, createTheme, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tab, Tabs, ThemeProvider, Toolbar, Typography } from '@mui/material'
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/system';
 import '../Fonts/Oswald-VariableFont_wght.ttf';
 import '../Fonts/Lato-Regular.ttf';
@@ -12,6 +13,9 @@ import '../Fonts/Lato-Light.ttf';
 import '../Fonts/Lato-Bold.ttf';
 import '../Fonts/Lato-Black.ttf';
 import EmployesList from './EmployesList';
+import {db, deleteDataFromEmployes} from '../Firebase'
+import CustomTable from './CustomTable';
+
 
 const drawerWidth = 240
 
@@ -73,6 +77,30 @@ export default function SideBarMenu() {
   const [value, setValue] = useState(0)
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
+  }
+
+  const [employes, setEmployes] = useState([])
+  
+
+   const getAllDataFromEmployes = (async () => { 
+    const storingArray:any = []
+    const querySnapshot = await getDocs(collection(db, "employes"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data())
+      storingArray.push({data: doc.data(),
+      id: doc.id,
+      })
+    })
+    setEmployes(storingArray)
+  })
+  useEffect(() => {
+    getAllDataFromEmployes()
+  }, [])
+
+  const deleteEmploye = (id:any) => {
+    const newArray:any = employes.filter((e:any) => e.id !== id)
+    deleteDataFromEmployes(id)
+    setEmployes(newArray)
   }
 
   return (
@@ -161,15 +189,29 @@ export default function SideBarMenu() {
       <Box>
         <Box>
           <Avatar>
-            
+
           </Avatar>
         </Box>
 
         <TabPanel value = {value} index={0}>
           <EmployesList />
+          <CustomTable></CustomTable>
         </TabPanel>
         <TabPanel value = {value} index={1}>
-          Testing 122333
+
+         {employes.map
+         ((employee:any) =>
+         (<>
+         
+          <h2>{employee.data.employeId}</h2>
+          <h2>{employee.data.employeName}</h2>
+          <h2>{employee.data.employeDepartment}</h2>
+          <h2>{employee.data.employeStartDate.toDate().toDateString()}</h2>
+          </>
+         )
+         
+         )}
+          
         </TabPanel>
       </Box>
     </Box>
