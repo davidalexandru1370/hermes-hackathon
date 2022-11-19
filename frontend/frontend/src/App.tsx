@@ -5,17 +5,19 @@ import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import LoadingButton from "@mui/lab/LoadingButton";
+//import LoadingButton from "@mui/material/lab/LoadingButton";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import BoxedLayout from "./core/components/BoxedLayout";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import { DashboardPage } from "./pages/DashboardPage/DashboardPage";
 // import { LoginPage } from "../src/pages/LoginPage/LoginPage";
 
 function App() {
   
   return (
     <Routes>
+      <Route path="/dashboard" element = {<DashboardPage/>}></Route>
       <Route
         path="/"
         element={
