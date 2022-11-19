@@ -14,6 +14,7 @@ import '../Fonts/Lato-Bold.ttf';
 import '../Fonts/Lato-Black.ttf';
 import EmployesList from './EmployesList';
 import {db, deleteDataFromEmployes} from '../Firebase'
+import CustomTable from './CustomTable';
 
 
 const drawerWidth = 240
@@ -51,7 +52,6 @@ function TabPanel(props: TabPanelProps) {
     hidden = {value !== index}
     id = {`simple-tabpanel-${index}`}
     aria-labelledby={`simple-tab-${index}`}
-    style={{width: '80vw'}}
     style={{width: '80vw'}}
     {...other}
     >
@@ -195,6 +195,7 @@ export default function SideBarMenu() {
 
         <TabPanel value = {value} index={0}>
           <EmployesList />
+          <CustomTable></CustomTable>
         </TabPanel>
         <TabPanel value = {value} index={1}>
 
@@ -206,7 +207,6 @@ export default function SideBarMenu() {
           <h2>{employee.data.employeName}</h2>
           <h2>{employee.data.employeDepartment}</h2>
           <h2>{employee.data.employeStartDate.toDate().toDateString()}</h2>
-          <Button onClick={() => deleteEmploye(employee.id)}>{employee.data.employeId}</Button>
           </>
          )
          

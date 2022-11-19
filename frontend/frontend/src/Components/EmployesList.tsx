@@ -1,5 +1,6 @@
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import { Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,18 +18,18 @@ const EmployesList = () => {
     { id: "1", name: "david" },
     {
       id: "1",
-      name: "david",
-      documents: [{ id: "1", title: "analize medicale", date : new Date(2018,2,3) }],
+      name: "David",
+      documents: [{ id: "1", title: "Analize medicale", date : new Date(2018,2,3) }],
     },
     {
       id: "1",
-      name: "david",
-      documents: [{ id: "1", title: "analize medicale", date: new Date(2022,1,3) }],
+      name: "David",
+      documents: [{ id: "1", title: "Analize medicale", date: new Date(2022,1,3) }],
     },
     {
       id: "1",
-      name: "david",
-      documents: [{ id: "1", title: "analize medicale", date: new Date(2022,7,23) }],
+      name: "David",
+      documents: [{ id: "1", title: "Analize medicale", date: new Date(2022,7,23) }],
     },
   ];
 
@@ -37,7 +38,7 @@ const EmployesList = () => {
     const dateDifference = new Date(currentDate.getTime() - documentDate.getTime());
     if (dateDifference.getUTCFullYear() - 1970 >= 1)
       return "#b30000"
-    else if (dateDifference.getUTCMonth() > 6)
+    else if (dateDifference.getUTCMonth() > 11)
       return "#e67300"
     else
       return "#90EE90"
@@ -50,9 +51,9 @@ const EmployesList = () => {
         <TableHead>
           <TableRow >
             <TableCell></TableCell>
-            <TableCell align="right">Name</TableCell>
-            <TableCell align="right">Document name</TableCell>
-            <TableCell align="right">Date</TableCell>
+            <TableCell align="right"><Typography>Name</Typography></TableCell>
+            <TableCell align="right"><Typography>Document name</Typography></TableCell>
+            <TableCell align="right"><Typography>Date</Typography></TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
@@ -63,7 +64,7 @@ const EmployesList = () => {
                 <TableRow
                   key={row.name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  style={{backgroundColor: `${colorRow(row.documents[0].date)}`}}
+                 
                 >
                   <TableCell component="th" scope="row">
                     <RemoveRedEyeIcon
@@ -76,9 +77,9 @@ const EmployesList = () => {
                       }}
                     />
                   </TableCell>
-                  <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.documents[0].title}</TableCell>
-                  <TableCell align="right">{row.documents[0].date.toLocaleDateString('en-UK')}</TableCell>
+                  <TableCell align="right">{<Typography>{row.name}</Typography>}</TableCell>
+                  <TableCell align="right">{<Typography>{row.documents[0].title}</Typography>}</TableCell>
+                  <TableCell align="right">{<Typography sx = {{color: colorRow(row.documents[0].date)}}>{row.documents[0].date.toLocaleDateString('en-UK')}</Typography>}</TableCell>
                   <TableCell align="right">
                     <DoNotDisturbOnIcon
                       sx={{
