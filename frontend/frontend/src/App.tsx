@@ -4,6 +4,7 @@ import "./App.css";
 import { Button } from "@mui/material";
 import { Routes, Route } from "react-router-dom";
 import { LoginPage } from "../src/pages/LoginPage/LoginPage";
+import { DashboardPage } from "../src/pages/DashboardPage/DashboardPage";
 
 function App() {
   const [myState, setMyState] = useState<string>("0");
@@ -59,6 +60,8 @@ function App() {
         }
       ></Route>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/dashboard" element = {<DashboardPage/>} />
+
     </Routes>
   );
 }
