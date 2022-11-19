@@ -3,6 +3,9 @@ const express = require('express')
 const app = express()
 const { logger } = require("./helpers/logger");
 const bodyParser = require("body-parser");
+const multer = require('multer');
+const forms = multer();
+
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "5MB" }));
 app.use(bodyParser.json({ limit: "5MB" }));
