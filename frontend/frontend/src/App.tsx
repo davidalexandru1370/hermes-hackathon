@@ -10,7 +10,6 @@ function App() {
   const [myState, setMyState] = useState<string>("0");
   const [counter, setCounter] = useState<number>(0);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
   useEffect(() => {
     const getAllCharacters = async () => {
       return fetch("https://anapioficeandfire.com/api/characters/583", {
