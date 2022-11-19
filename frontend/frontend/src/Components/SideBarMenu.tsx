@@ -52,6 +52,7 @@ function TabPanel(props: TabPanelProps) {
     id = {`simple-tabpanel-${index}`}
     aria-labelledby={`simple-tab-${index}`}
     style={{width: '80vw'}}
+    style={{width: '80vw'}}
     {...other}
     >
       {value === index && (

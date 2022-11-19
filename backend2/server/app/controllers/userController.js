@@ -1,40 +1,15 @@
 const _ = require("lodash");
 const moment = require("moment");
 const { matchedData } = require("express-validator");
+const fs = require("fs")
 
 const userModel = require("../models/userModel");
 
-// const { getTokenData, generateToken } = require("../helpers/authentication");
 const { logger } = require("../helpers/logger");
-const { handleSuccess, validateRequest } = require("../helpers/response")
-//const { validateRequest, handleCustomValidationError, handleSuccess } = require("../helpers/response");
-
-const controllerName = "userController";
-
-// const userLogger = logger.child({ module: controllerName });
-
-const getUserInfo = async (req, res) => {
-    /*const validationRequest = await validateRequest(req, res, {});
-    if (validationRequest !== null) {
-        return validationRequest;
-    }
-    const tokenData = await getTokenData(req);
-    const row = await userModel.getAllDetails(tokenData.id);
-    return handleSuccess(res, "", row);*/
-    const row = await userModel.find(1)
-    return handleSuccess(res, "", row)
-};
+const { handleSuccess, validateRequest, handleValidationError} = require("../helpers/response")
+const path = require("path");
 
 const create = async (req, res) => {
-    const validationRequest = await validateRequest(req, res, {});
-    if (validationRequest !== null) {
-        return validationRequest;
-    }
-    const params = matchedData(req, {
-        includeOptionals: true,
-        onlyValidData: true
-    });
-
     const row = {
         "fullname": req.body.fullname,
         "email_address": req.body.email_address,
@@ -46,7 +21,48 @@ const create = async (req, res) => {
 }
 
 
+const add_pdf = async(req, res) => {
+    if (req.file) {
+        if (req.file.mimetype !== "application/pdf") {
+            fs.unlinkSync(req.file.path)
+            return res.status(400).json({
+                success: true,
+                status: 400,
+                message: "",
+                data: "Fisierul trebuie sa fie in formatul PDF!"
+            });
+        }
+        return handleSuccess(res, "", "")
+    }
+}
+
+const get_pdf = async(req, res) => {
+    const options = {
+        root: path.join(__dirname, '../../app/internal_storage'),
+        dotfiles: 'deny',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    }
+    const fileName = `${req.body.id}.pdf`
+    res.sendFile(fileName, options, function (err) {
+        if (err) {
+            console.log(err)
+            return res.status(400).json({
+                success: true,
+                status: 400,
+                message: "",
+                data: "Eroare, nu s-a gasit fisier!"
+            });
+        } else {
+            console.log('Sent:', fileName)
+        }
+    })
+}
+
 module.exports = {
-    getUserInfo,
-    create
+    create,
+    add_pdf,
+    get_pdf
 };
