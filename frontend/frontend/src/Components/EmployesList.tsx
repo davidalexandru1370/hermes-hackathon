@@ -8,20 +8,23 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { IEmployee } from "../Model/IEmployee";
+// const d = new Date(2018, 11, 24, 10, 33, 30, 0);
 
 const EmployesList = () => {
+  // var d1 = new Date(2018, 11, 23)
   const rows: IEmployee[] = [
     { id: "1", name: "david" },
     { id: "1", name: "david" },
     {
       id: "1",
       name: "david",
-      documents: [{ id: "1", title: "analize medicale", date: "24/07/2022" }],
+      
+      documents: [{ id: "1", title: "analize medicale", date : new Date(2018,2,3) }],
     },
     {
       id: "1",
       name: "david",
-      documents: [{ id: "1", title: "analize medicale", date: "25/06/2022" }],
+      documents: [{ id: "1", title: "analize medicale", date: new Date(2022,6,3) }],
     },
   ];
 
@@ -58,7 +61,7 @@ const EmployesList = () => {
                   </TableCell>
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell align="right">{row.documents[0].title}</TableCell>
-                  <TableCell align="right">{row.documents[0].date}</TableCell>
+                  <TableCell align="right">{row.documents[0].date.toDateString()}</TableCell>
                   <TableCell align="right">
                     <DoNotDisturbOnIcon
                       sx={{
