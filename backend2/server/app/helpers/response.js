@@ -39,15 +39,10 @@ const handleValidationError = (req, res) => {
     return null;
 };
 
-const handleCustomValidationError = (res, errorArray) => {
-    return emitValidationResponse(res, errorArray);
-};
-
 
 module.exports = {
     handleSuccess,
     validateRequest,
     emitValidationResponse,
-    handleValidationError,
-    handleCustomValidationError
+    handleValidationError
 };
