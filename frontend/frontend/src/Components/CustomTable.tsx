@@ -21,6 +21,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import { IEmployee } from '../Model/IEmployee';
+import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 
 interface Data {
   id: number;
@@ -135,18 +137,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox"></TableCell>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-          
-        </TableCell>
+        
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -168,6 +159,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             </TableSortLabel>
           </TableCell>
         ))}
+        <TableCell padding="checkbox"></TableCell>
       </TableRow>
     </TableHead>
   );
@@ -185,22 +177,10 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
+      
       }}
     >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
+      {(
         <Typography
           sx={{ flex: '1 1 100%' }}
           variant="h6"
@@ -210,24 +190,35 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           Medical Files
         </Typography>
       )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : null}
     </Toolbar>
   );
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props:any) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('id');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  console.log(props.rows[0] ? props.rows[0].documents[0] : null)
+
+  function convertMyData (sampleData:any) {
+    const newArray:any[] = [];
+    sampleData.forEach((item:any) => {
+      newArray.push({
+        id: item.documents[0].title[0],
+        name: item.name,
+        date: item.documents[0].date,
+        button: ''
+      })
+    })
+    console.log(newArray)
+    return newArray
+  }
+
+  const myRows = convertMyData(props.rows)
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -319,7 +310,7 @@ export default function EnhancedTable() {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
               rows.sort(getComparator(order, orderBy)).slice() */}
-              {rows.sort(getComparator(order, orderBy)).slice()
+              {myRows.sort(getComparator(order, orderBy)).slice()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
@@ -333,11 +324,18 @@ export default function EnhancedTable() {
                       aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.name}
-                      selected={isItemSelected}
+                      // selected={isItemSelected}
                     >
                   <TableCell component="th" scope="row">
                     <RemoveRedEyeIcon
-                      onClick={() => {}}
+                      onClick={() => {
+                                             console.log("aici");
+                                             window.open(
+                                               `${`http://127.0.0.1:8080/${row.id}.pdf`}`,
+                                               "_blank",
+                                               "fullscreen=yes"
+                                             );
+                                         }}
                       sx={{
                         "&:hover": {
                           color: 'blue',
@@ -346,17 +344,6 @@ export default function EnhancedTable() {
                       }}
                     />
                     </TableCell>
-
-
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
                       
                       
                       <TableCell
@@ -371,6 +358,23 @@ export default function EnhancedTable() {
 
                       <TableCell align="right">{row.name}</TableCell>
                       <TableCell align="right" sx = {{color: colorRow(row.date)}}>{row.date.toLocaleDateString('en-UK')}</TableCell>
+                      <TableCell component="th" scope="row">
+                    <DoNotDisturbOnIcon
+                      onClick={async () => {
+                                            const name: string = row
+                                              .documents![0].id.split("/")
+                                              .slice(-1)[0];
+                                            await props.deleteDocument(name);
+                                            props.setRefetch(props.reFetch + 1);
+                                          }}
+                      sx={{
+                        "&:hover": {
+                          color: 'blue',
+                          cursor: 'pointer'
+                        },
+                      }}
+                    />
+                    </TableCell>
                       
                     </TableRow>
                   );
@@ -390,7 +394,7 @@ export default function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 8]}
           component="div"
-          count={rows.length}
+          count={myRows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
