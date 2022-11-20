@@ -9,9 +9,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { IEmployee } from "../Model/IEmployee";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Children } from "react";
 import { SettingsInputAntennaTwoTone } from "@mui/icons-material";
 import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
+import EnhancedTable from "./CustomTable"
 // const d = new Date(2018, 11, 24, 10, 33, 30, 0);
 
 const EmployesList = () => {
@@ -37,11 +38,12 @@ const EmployesList = () => {
   }
 
   const getAllDocuments = async () => {
-    await fetch("https://localhost:7203/api/document/getall")
-      .then(async (resp) => {
-        return resp.json();
-      })
-      .then((doc: string[]) => {
+    // await fetch("https://localhost:7203/api/document/getall")
+    //   .then(async (resp) => {
+    //     return resp.json();
+    //   })
+      // .then(
+        let doc: string[] = ["1.pdf", "2.pdf","3.pdf","4.pdf"]
         let today: Date = new Date();
         setRows(
           doc.map((d: string) => {
@@ -59,9 +61,9 @@ const EmployesList = () => {
             };
             today.setMonth(today.getMonth() - 4);
             return mock;
-          })
-        );
-      });
+          
+      
+      }));
   };
 
   useEffect(() => {
@@ -74,87 +76,88 @@ const EmployesList = () => {
       currentDate.getTime() - documentDate.getTime()
     );
     if (dateDifference.getUTCFullYear() - 1970 >= 1) return "#b30000";
-    else if (dateDifference.getUTCMonth() > 6) return "#e67300";
+    else if (dateDifference.getUTCMonth() > 11) return "#e67300";
     else return "#90EE90";
   }
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: "100%" }}>
-      <Table sx={{ minWidth: 650, maxWidth: "100%" }} aria-label="simple table">
-        <TableHead>
-          <TableRow style={{ backgroundColor: "gray" }}>
-            <TableCell></TableCell>
-            <TableCell align="right">
-              <Typography>Name</Typography>
-            </TableCell>
-            <TableCell align="right">
-              <Typography>Document name</Typography>
-            </TableCell>
-            <TableCell align="right">
-              <Typography>Date</Typography>
-            </TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map(
-            (row) =>
-              row.documents !== undefined && (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  style={{
-                    backgroundColor: `${colorRow(row.documents[0].date)}`,
-                  }}
-                >
-                  <TableCell component="th" scope="row">
-                    <RemoveRedEyeIcon
-                      onClick={() => {
-                        console.log("aici");
-                        window.open(
-                          `${row.documents![0].id}`,
-                          "_blank",
-                          "fullscreen=yes"
-                        );
-                      }}
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "gray",
-                          borderRadius: "20px",
-                          cursor: "pointer",
-                        },
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.documents[0].title}</TableCell>
-                  <TableCell align="right">
-                    {row.documents[0].date.toLocaleDateString("en-UK")}
-                  </TableCell>
-                  <TableCell align="right">
-                    <DoNotDisturbOnIcon
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "gray",
-                          borderRadius: "50px",
-                          cursor: "pointer",
-                        },
-                      }}
-                      onClick={async () => {
-                        const name: string = row
-                          .documents![0].id.split("/")
-                          .slice(-1)[0];
-                        await deleteDocument(name);
-                        setRefetch(reFetch + 1);
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              )
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <EnhancedTable rows = {rows} deleteDocument = {deleteDocument} setRefetch = {setRefetch} reFetch = {reFetch}></EnhancedTable>
+    // <TableContainer component={Paper} sx={{ maxWidth: "100%" }}>
+    //   <Table sx={{ minWidth: 650, maxWidth: "100%" }} aria-label="simple table">
+    //     <TableHead>
+    //       <TableRow style={{ backgroundColor: "gray" }}>
+    //         <TableCell></TableCell>
+    //         <TableCell align="right">
+    //           <Typography>Name</Typography>
+    //         </TableCell>
+    //         <TableCell align="right">
+    //           <Typography>Document name</Typography>
+    //         </TableCell>
+    //         <TableCell align="right">
+    //           <Typography>Date</Typography>
+    //         </TableCell>
+    //         <TableCell></TableCell>
+    //       </TableRow>
+    //     </TableHead>
+    //     <TableBody>
+    //       {rows.map(
+    //         (row) =>
+    //           row.documents !== undefined && (
+    //             <TableRow
+    //               key={row.name}
+    //               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+    //               style={{
+    //                 backgroundColor: `${colorRow(row.documents[0].date)}`,
+    //               }}
+    //             >
+    //               <TableCell component="th" scope="row">
+    //                 <RemoveRedEyeIcon
+    //                   onClick={() => {
+    //                     console.log("aici");
+    //                     window.open(
+    //                       `${row.documents![0].id}`,
+    //                       "_blank",
+    //                       "fullscreen=yes"
+    //                     );
+    //                   }}
+    //                   sx={{
+    //                     "&:hover": {
+    //                       backgroundColor: "gray",
+    //                       borderRadius: "20px",
+    //                       cursor: "pointer",
+    //                     },
+    //                   }}
+    //                 />
+    //               </TableCell>
+    //               <TableCell align="right">{row.name}</TableCell>
+    //               <TableCell align="right">{row.documents[0].title}</TableCell>
+    //               <TableCell align="right">
+    //                 {row.documents[0].date.toLocaleDateString("en-UK")}
+    //               </TableCell>
+    //               <TableCell align="right">
+    //                 <DoNotDisturbOnIcon
+    //                   sx={{
+    //                     "&:hover": {
+    //                       backgroundColor: "gray",
+    //                       borderRadius: "50px",
+    //                       cursor: "pointer",
+    //                     },
+    //                   }}
+    //                   onClick={async () => {
+    //                     const name: string = row
+    //                       .documents![0].id.split("/")
+    //                       .slice(-1)[0];
+    //                     await deleteDocument(name);
+    //                     setRefetch(reFetch + 1);
+    //                   }}
+    //                 />
+    //               </TableCell>
+    //             </TableRow>
+    //           )
+    //       )}
+    //     </TableBody>
+    //   </Table>
+    // </TableContainer>
   );
 };
 
