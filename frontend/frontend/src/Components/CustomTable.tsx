@@ -286,18 +286,25 @@ export default function EnhancedTable(props: any) {
   useEffect(() => {
     myRows.forEach((row) => {
       const currentDate = new Date();
-      const dateDifference = row.documents
-        ? new Date(currentDate.getTime() - row.documents[0].date.getTime())
-        : new Date();
+      console.log("dsadsda");
+      console.log(row);
+      console.log(row.documents);
+      const dateDifference = row
+        ? new Date(currentDate.getTime() - row.date.getTime())
+        : null;
       const redEmployes = [];
-
-      if (dateDifference.getUTCFullYear() - 1970 >= 1) {
-        redEmployes.push(employes[Number(row.id) - 1].data);
+      console.log("DIFF", dateDifference);
+      if (dateDifference != null) {
+        if (dateDifference.getUTCFullYear() - 1970 >= 1) {
+          redEmployes.push(employes[Number(row.id) - 1].data);
+          props.setNumberOfExpiredDocuments(redEmployes.length);
+        }
         props.setNumberOfExpiredDocuments(redEmployes.length);
       }
+      props.setNumberOfExpiredDocuments(redEmployes.length);
       props.setEmployeesInNeedOfNewDocuments(redEmployes);
     });
-  }, [employes]);
+  }, [employes, props.rows]);
 
   const myRows = convertMyData(props.rows);
 

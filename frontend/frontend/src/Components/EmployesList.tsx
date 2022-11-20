@@ -16,8 +16,6 @@ import EnhancedTable from "./CustomTable";
 // const d = new Date(2018, 11, 24, 10, 33, 30, 0);
 
 const EmployesList = (props: any) => {
-  const [rows, setRows] = useState<IEmployee[]>([]);
-
   const [reFetch, setRefetch] = useState<number>(0);
 
   const deleteDocument = async (id: string) => {
@@ -44,7 +42,7 @@ const EmployesList = (props: any) => {
       })
       .then((doc: string[]) => {
         let today: Date = new Date();
-        setRows(
+        props.setRows(
           doc.map((d: string) => {
             let dateCopy: Date = new Date(today.getTime());
             const mock: IEmployee = {
@@ -67,6 +65,8 @@ const EmployesList = (props: any) => {
 
   useEffect(() => {
     getAllDocuments();
+    props.getAllDataFromEmployes();
+    console.log("employes = ", props.employes);
   }, [reFetch]);
 
   function colorRow(documentDate: Date) {
@@ -81,7 +81,7 @@ const EmployesList = (props: any) => {
 
   return (
     <EnhancedTable
-      rows={rows}
+      rows={props.rows}
       deleteDocument={deleteDocument}
       setRefetch={setRefetch}
       reFetch={reFetch}
