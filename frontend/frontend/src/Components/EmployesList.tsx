@@ -1,5 +1,6 @@
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import { Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -83,9 +84,15 @@ const EmployesList = () => {
         <TableHead>
           <TableRow style={{ backgroundColor: "gray" }}>
             <TableCell></TableCell>
-            <TableCell align="right">Name</TableCell>
-            <TableCell align="right">Document name</TableCell>
-            <TableCell align="right">Date</TableCell>
+            <TableCell align="right">
+              <Typography>Name</Typography>
+            </TableCell>
+            <TableCell align="right">
+              <Typography>Document name</Typography>
+            </TableCell>
+            <TableCell align="right">
+              <Typography>Date</Typography>
+            </TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
