@@ -15,7 +15,14 @@ import '../Fonts/Lato-Black.ttf';
 import EmployesList from './EmployesList';
 import {db, deleteDataFromEmployes} from '../Firebase'
 import CustomTable from './CustomTable';
+import avatar1 from '../Imgs/avatar1.jpg';
+import avatar2 from '../Imgs/avatar2.jpg';
+import avatar3 from '../Imgs/avatar3.jpg';
+import avatar4 from '../Imgs/avatar4.jpg';
+import avatar5 from '../Imgs/avatar5.jpg';
+import { IEmployee } from '../Model/IEmployee';
 
+const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5]
 
 const drawerWidth = 240
 
@@ -103,6 +110,39 @@ export default function SideBarMenu() {
     setEmployes(newArray)
   }
 
+    const rows: IEmployee[] = [
+    {
+      id: "1",
+      name: "David",
+      documents: [{ id: "1", title: "Analize medicale", date : new Date(2018,2,3) }],
+    },
+    {
+      id: "1",
+      name: "David",
+      documents: [{ id: "1", title: "Analize medicale", date: new Date(2022,1,3) }],
+    },
+    {
+      id: "1",
+      name: "David",
+      documents: [{ id: "1", title: "Analize medicale", date: new Date(2022,7,23) }],
+    },
+  ];
+
+  const [numberOfExpiredDocuments, setNumberOfExpiredDocuments] = useState(0)
+
+  useEffect(() =>{
+    rows.forEach(row => {
+      const currentDate = new Date();
+      const dateDifference = row.documents ? new Date(currentDate.getTime() - row.documents[0].date.getTime()) : new Date();
+
+
+      if (dateDifference.getUTCFullYear() - 1970 >= 1)
+        setNumberOfExpiredDocuments(numberOfExpiredDocuments+1)
+    })
+  }, [])
+
+  console.log(numberOfExpiredDocuments)
+
   return (
     <>
     {/* <ThemeProvider theme={theme}>
@@ -119,15 +159,13 @@ export default function SideBarMenu() {
         color: "#fff"
       }}>
       <Typography data-end="5" sx={{
-        fontFamily: 'Oswald',
         fontWeight: 'bold',
         '&::first-letter' : {
           color: '#FFD831'
         },
         '&::after' : {
           content: 'attr(data-end)',
-          color: '#FFD831',
-          fontFamily: 'Oswald'
+          color: '#FFD831',  
         }
       }} variant = "h3" ml="auto" mr="auto" pt="16px" pb="16px">Vicious</Typography>
       <Tabs textColor = "inherit" orientation='vertical' value={value} onChange={handleChange} sx={{
@@ -185,17 +223,16 @@ export default function SideBarMenu() {
 
       
       </Box>
-      
+        
       <Box>
         <Box>
-          <Avatar>
-
-          </Avatar>
+          {/* <Avatar src={avatar1} ></Avatar> */}
+          {/* <Typography pl="24px" mt="24px">You have <span style = {{color: `${numberOfExpiredDocuments > 0 ? 'red' : 'inherit'}`}}>{numberOfExpiredDocuments}</span> employees in need of medical checkups</Typography> */}
         </Box>
 
         <TabPanel value = {value} index={0}>
           <EmployesList />
-          <CustomTable></CustomTable>
+          {/* <CustomTable></CustomTable> */}
         </TabPanel>
         <TabPanel value = {value} index={1}>
 
