@@ -21,6 +21,9 @@ import avatar3 from '../Imgs/avatar3.jpg';
 import avatar4 from '../Imgs/avatar4.jpg';
 import avatar5 from '../Imgs/avatar5.jpg';
 import { IEmployee } from '../Model/IEmployee';
+import Employee from './Employee';
+import EmployeeRed from './EmployeeRed';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 
 const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5]
 
@@ -86,6 +89,10 @@ export default function SideBarMenu() {
     setValue(newValue)
   }
 
+  const handleClick = () => {
+    setValue(2)
+  }
+
   const [employes, setEmployes] = useState([])
   
 
@@ -129,17 +136,8 @@ export default function SideBarMenu() {
   ];
 
   const [numberOfExpiredDocuments, setNumberOfExpiredDocuments] = useState(0)
-
-  useEffect(() =>{
-    rows.forEach(row => {
-      const currentDate = new Date();
-      const dateDifference = row.documents ? new Date(currentDate.getTime() - row.documents[0].date.getTime()) : new Date();
-
-
-      if (dateDifference.getUTCFullYear() - 1970 >= 1)
-        setNumberOfExpiredDocuments(numberOfExpiredDocuments+1)
-    })
-  }, [])
+  const [employesInNeedOfNewDocuments, setEmployeesInNeedOfNewDocuments] = useState([])
+  console.log("RED EMPLOYES",employesInNeedOfNewDocuments)
 
   console.log(numberOfExpiredDocuments)
 
@@ -219,36 +217,89 @@ export default function SideBarMenu() {
         }}
         />
       
+      <Tab 
+        icon = {<PriorityHighIcon sx={{paddingRight: '8px'}}fontSize="small"/>}
+        iconPosition="start"
+        label = "In need Of Checkup" {...a11yProps(2)} sx= {{
+          backgroundImage: 'linear-gradient(#FFD831, #FFD831)',
+          backgroundPosition: '50% 50%',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '0% 100%',
+          opacity : '1',
+          margin: "5px 24px",
+          borderRadius: "10px",
+          transition: 'background-size .5s, color .5s',
+          minHeight: "48px",
+          justifyContent: "flex-start",
+          '&:hover': {
+            backgroundSize: '100% 100%',
+            color: '#1C212D'
+          }
+        }}
+        />
+
       </Tabs>
 
       
       </Box>
         
       <Box>
-        <Box>
+        <Box sx={{
+          display: 'flex',
+        }}>
           {/* <Avatar src={avatar1} ></Avatar> */}
-          {/* <Typography pl="24px" mt="24px">You have <span style = {{color: `${numberOfExpiredDocuments > 0 ? 'red' : 'inherit'}`}}>{numberOfExpiredDocuments}</span> employees in need of medical checkups</Typography> */}
+          <Typography pl="24px" mt="24px">You have <span style = {{color: `${numberOfExpiredDocuments > 0 ? 'red' : 'inherit'}`}}>{numberOfExpiredDocuments}</span> employees in need of medical checkups</Typography>
+          <Typography color="red" pl="4px" mt="24px" onClick={handleClick} sx ={{
+            textDecoration: 'underline',
+            cursor: 'pointer',
+          }}>Click Here to See Them</Typography>
         </Box>
 
         <TabPanel value = {value} index={0}>
-          <EmployesList />
+          <EmployesList numberOfExpiredDocuments = {numberOfExpiredDocuments} setNumberOfExpiredDocuments = {setNumberOfExpiredDocuments} employesInNeedOfNewDocuments ={employesInNeedOfNewDocuments} setEmployeesInNeedOfNewDocuments = {setEmployeesInNeedOfNewDocuments}/>
           {/* <CustomTable></CustomTable> */}
         </TabPanel>
         <TabPanel value = {value} index={1}>
-
+        <Box  sx = {{
+          display: "flex",
+          flexWrap: "wrap",
+        }}>
          {employes.map
          ((employee:any) =>
          (<>
-         
-          <h2>{employee.data.employeId}</h2>
+          <Employee employesInNeedOfNewDocuments = {employesInNeedOfNewDocuments} avatar = {avatars[Number(employee.data.employeId)-1]} employee = {employee}></Employee>
+          {/* <h2>{employee.data.employeId}</h2>
           <h2>{employee.data.employeName}</h2>
           <h2>{employee.data.employeDepartment}</h2>
-          <h2>{employee.data.employeStartDate.toDate().toDateString()}</h2>
+          <h2>{employee.data.employeStartDate.toDate().toDateString()}</h2> */}
           </>
          )
          
          )}
+         </Box>
           
+        </TabPanel>
+
+        <TabPanel value={value} index ={2}>
+
+        <Box  sx = {{
+          display: "flex",
+          flexWrap: "wrap",
+        }}>
+         {employesInNeedOfNewDocuments.map
+         ((employee:any) =>
+         (<>
+          <EmployeeRed employee = {employee} avatar = {avatars[Number(employee.employeId)-1]}></EmployeeRed>
+          {/* <h2>{employee.data.employeId}</h2>
+          <h2>{employee.data.employeName}</h2>
+          <h2>{employee.data.employeDepartment}</h2>
+          <h2>{employee.data.employeStartDate.toDate().toDateString()}</h2> */}
+          </>
+         )
+         
+         )}
+         </Box>
+
         </TabPanel>
       </Box>
     </Box>

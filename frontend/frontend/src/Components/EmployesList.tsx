@@ -12,10 +12,10 @@ import { IEmployee } from "../Model/IEmployee";
 import { useState, useEffect, Children } from "react";
 import { SettingsInputAntennaTwoTone } from "@mui/icons-material";
 import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
-import EnhancedTable from "./CustomTable";
+import EnhancedTable from "./CustomTable"
 // const d = new Date(2018, 11, 24, 10, 33, 30, 0);
 
-const EmployesList = () => {
+const EmployesList = (props:any) => {
   const [rows, setRows] = useState<IEmployee[]>([]);
 
   const [reFetch, setRefetch] = useState<number>(0);
@@ -38,11 +38,12 @@ const EmployesList = () => {
   }
 
   const getAllDocuments = async () => {
-    await fetch("https://localhost:7203/api/document/getall")
-      .then(async (resp) => {
-        return resp.json();
-      })
-      .then((doc: string[]) => {
+    // await fetch("https://localhost:7203/api/document/getall")
+    //   .then(async (resp) => {
+    //     return resp.json();
+    //   })
+      // .then(
+        let doc: string[] = ["1.pdf", "2.pdf","3.pdf","4.pdf"]
         let today: Date = new Date();
         setRows(
           doc.map((d: string) => {
@@ -60,9 +61,9 @@ const EmployesList = () => {
             };
             today.setMonth(today.getMonth() - 4);
             return mock;
-          })
-        );
-      });
+          
+      
+      }));
   };
 
   useEffect(() => {
@@ -80,12 +81,7 @@ const EmployesList = () => {
   }
 
   return (
-    <EnhancedTable
-      rows={rows}
-      deleteDocument={deleteDocument}
-      setRefetch={setRefetch}
-      reFetch={reFetch}
-    ></EnhancedTable>
+    <EnhancedTable rows = {rows} deleteDocument = {deleteDocument} setRefetch = {setRefetch} reFetch = {reFetch} numberOfExpiredDocuments = {props.numberOfExpiredDocuments} setNumberOfExpiredDocuments = {props.setNumberOfExpiredDocuments} employesInNeedOfNewDocuments = {props.employesInNeedOfNewDocuments} setEmployeesInNeedOfNewDocuments = {props.setEmployeesInNeedOfNewDocuments}></EnhancedTable>
     // <TableContainer component={Paper} sx={{ maxWidth: "100%" }}>
     //   <Table sx={{ minWidth: 650, maxWidth: "100%" }} aria-label="simple table">
     //     <TableHead>

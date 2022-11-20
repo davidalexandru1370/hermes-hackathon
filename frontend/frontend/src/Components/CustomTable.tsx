@@ -21,8 +21,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import { IEmployee } from "../Model/IEmployee";
+import { IEmployee } from '../Model/IEmployee';
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
+import { useEffect, useState } from 'react'
+import {db, deleteDataFromEmployes} from '../Firebase'
+import { getFirestore, collection, getDocs, setDoc, getDoc, doc,deleteDoc, addDoc } from 'firebase/firestore/lite';
 
 interface Data {
   id: number;
@@ -149,7 +152,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox"></TableCell>
-
+        
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -172,6 +175,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           </TableCell>
         ))}
         <TableCell padding="checkbox"></TableCell>
+        <TableCell padding="checkbox"></TableCell>
       </TableRow>
     </TableHead>
   );
@@ -189,47 +193,107 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
+      
       }}
     >
-      {
+      {(
         <Typography
-          sx={{ flex: "1 1 100%" }}
+          sx={{ flex: '1 1 100%' }}
           variant="h6"
           id="tableTitle"
           component="div"
         >
           Medical Files
         </Typography>
-      }
+      )}
     </Toolbar>
   );
 }
 
-export default function EnhancedTable(props: any) {
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("id");
+export default function EnhancedTable(props:any) {
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('id');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  console.log(props.rows[0] ? props.rows[0].documents[0] : null);
+  console.log(props.rows[0] ? props.rows[0].documents[0] : null)
 
-  function convertMyData(sampleData: any) {
-    const newArray: any[] = [];
-    sampleData.forEach((item: any) => {
+  interface Iemployes {
+    data: {
+      employeId: string;
+      employeName: string;
+      employeStartDate: Date;
+      employeDepartment: string
+    },
+    id: string
+  }
+
+  const [employes, setEmployes] = useState<Iemployes[]>([])
+  const [employesNames, setEmployesNames] = useState([])
+
+  const getAllDataFromEmployes = (async () => { 
+    props.setNumberOfExpiredDocuments(0)
+    const storingArray:any = []
+    const namesArray:any = []
+    const querySnapshot = await getDocs(collection(db, "employes"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data())
+      
+      storingArray.push({data: doc.data(),
+      id: doc.id,
+      })
+      namesArray.push(doc.data().employeName)
+      console.log("piece of shit",doc.data())
+    })
+    console.log("WTF", storingArray)
+    setEmployes(storingArray)
+    setEmployesNames(namesArray)
+    console.log("????",employes)
+  })
+  useEffect(() => {
+    getAllDataFromEmployes()
+    
+  }, [])
+
+  function convertMyData (sampleData:any) {
+    const newArray:any[] = [];
+    sampleData.forEach((item:any) => {
       newArray.push({
         id: item.documents[0].title[0],
         name: item.name,
         date: item.documents[0].date,
-        button: "",
-      });
-    });
-    console.log(newArray);
-    return newArray;
+        button: ''
+      })
+    })
+    console.log("HERE", newArray)
+    newArray.forEach((row:any) => { 
+      row.name = employes.length != 0 ? employes[Number(row.id)-1].data.employeName : ''
+    })
+    const result = newArray.filter(data => data.name !='')
+    return result
   }
 
-  const myRows = convertMyData(props.rows);
+   useEffect(() =>{
+    myRows.forEach(row => {
+      const currentDate = new Date();
+      const dateDifference = row.documents ? new Date(currentDate.getTime() - row.documents[0].date.getTime()) : new Date();
+      const redEmployes = []
+
+      if (dateDifference.getUTCFullYear() - 1970 >= 1) {
+        
+        redEmployes.push(employes[Number(row.id)-1].data)
+        props.setNumberOfExpiredDocuments(redEmployes.length)
+      }
+      props.setEmployeesInNeedOfNewDocuments(redEmployes)
+    })
+  }, [employes])
+
+  const myRows = convertMyData(props.rows)
+
+
+  
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -299,7 +363,6 @@ export default function EnhancedTable(props: any) {
     else if (dateDifference.getUTCMonth() > 11) return "#ffff14";
     else return "#47ed5a";
   }
-
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
@@ -321,9 +384,7 @@ export default function EnhancedTable(props: any) {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
               rows.sort(getComparator(order, orderBy)).slice() */}
-              {myRows
-                .sort(getComparator(order, orderBy))
-                .slice()
+              {myRows.sort(getComparator(order, orderBy)).slice()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
@@ -337,27 +398,28 @@ export default function EnhancedTable(props: any) {
                       aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.name}
-                      // selected={isItemSelected}
+                      // // selected={isItemSelected}
                     >
-                      <TableCell component="th" scope="row">
-                        <RemoveRedEyeIcon
-                          onClick={() => {
-                            console.log("aici");
-                            window.open(
-                              `${`http://127.0.0.1:8080/${row.id}.pdf`}`,
-                              "_blank",
-                              "fullscreen=yes"
-                            );
-                          }}
-                          sx={{
-                            "&:hover": {
-                              color: "blue",
-                              cursor: "pointer",
-                            },
-                          }}
-                        />
-                      </TableCell>
-
+                  <TableCell component="th" scope="row">
+                    <RemoveRedEyeIcon
+                      onClick={() => {
+                                             console.log("aici");
+                                             window.open(
+                                               `${`http://127.0.0.1:8080/${row.id}.pdf`}`,
+                                               "_blank",
+                                               "fullscreen=yes"
+                                             );
+                                         }}
+                      sx={{
+                        "&:hover": {
+                          color: 'blue',
+                          cursor: 'pointer'
+                        },
+                      }}
+                    />
+                    </TableCell>
+                      
+                      
                       <TableCell
                         component="th"
                         id={labelId}
@@ -366,29 +428,26 @@ export default function EnhancedTable(props: any) {
                       >
                         {row.id}
                       </TableCell>
+                          
 
-                      <TableCell align="right">{row.name}</TableCell>
-                      <TableCell
-                        align="right"
-                        sx={{ color: colorRow(row.date) }}
-                      >
-                        {row.date.toLocaleDateString("en-UK")}
-                      </TableCell>
+                      <TableCell align="right">{employes[0] ? employes[Number(row.id)-1].data.employeName : ''}</TableCell>
+                      <TableCell align="right" sx = {{color: colorRow(row.date)}}>{row.date.toLocaleDateString('en-UK')}</TableCell>
                       <TableCell component="th" scope="row">
-                        <DoNotDisturbOnIcon
-                          onClick={async () => {
-                            const name: string = `${row.id}.pdf`;
-                            await props.deleteDocument(name);
-                            props.setRefetch(props.reFetch + 1);
-                          }}
-                          sx={{
-                            "&:hover": {
-                              color: "blue",
-                              cursor: "pointer",
-                            },
-                          }}
-                        />
-                      </TableCell>
+                    <DoNotDisturbOnIcon
+                      onClick={async () => {
+                                            const name: string = `${row.id}.pdf`;
+                                            await props.deleteDocument(name);
+                                            props.setRefetch(props.reFetch + 1);
+                                          }}
+                      sx={{
+                        "&:hover": {
+                          color: 'blue',
+                          cursor: 'pointer'
+                        },
+                      }}
+                    />
+                    </TableCell>
+                      
                     </TableRow>
                   );
                 })}
