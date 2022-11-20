@@ -65,11 +65,7 @@ export default function Employee(props:any) {
               <Typography variant="subtitle1">{props.employee.data.employeStartDate.toDate().toLocaleDateString('en-UK')}</Typography>
             </Box>
 
-            <Box>
-              <Typography align="center">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-              </Typography>
-            </Box>
+            
           </Box>
 
           
