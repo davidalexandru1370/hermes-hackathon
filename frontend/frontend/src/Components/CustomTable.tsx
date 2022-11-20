@@ -23,6 +23,18 @@ import { visuallyHidden } from "@mui/utils";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { IEmployee } from "../Model/IEmployee";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
+import { useEffect, useState } from "react";
+import { db, deleteDataFromEmployes } from "../Firebase";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  setDoc,
+  getDoc,
+  doc,
+  deleteDoc,
+  addDoc,
+} from "firebase/firestore/lite";
 
 interface Data {
   id: number;
@@ -172,6 +184,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           </TableCell>
         ))}
         <TableCell padding="checkbox"></TableCell>
+        <TableCell padding="checkbox"></TableCell>
       </TableRow>
     </TableHead>
   );
@@ -215,6 +228,40 @@ export default function EnhancedTable(props: any) {
 
   console.log(props.rows[0] ? props.rows[0].documents[0] : null);
 
+  interface Iemployes {
+    data: {
+      employeId: string;
+      employeName: string;
+      employeStartDate: Date;
+      employeDepartment: string;
+    };
+    id: string;
+  }
+
+  const [employes, setEmployes] = useState<Iemployes[]>([]);
+  const [employesNames, setEmployesNames] = useState([]);
+
+  const getAllDataFromEmployes = async () => {
+    props.setNumberOfExpiredDocuments(0);
+    const storingArray: any = [];
+    const namesArray: any = [];
+    const querySnapshot = await getDocs(collection(db, "employes"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+
+      storingArray.push({ data: doc.data(), id: doc.id });
+      namesArray.push(doc.data().employeName);
+      console.log("piece of shit", doc.data());
+    });
+    console.log("WTF", storingArray);
+    setEmployes(storingArray);
+    setEmployesNames(namesArray);
+    console.log("????", employes);
+  };
+  useEffect(() => {
+    getAllDataFromEmployes();
+  }, []);
+
   function convertMyData(sampleData: any) {
     const newArray: any[] = [];
     sampleData.forEach((item: any) => {
@@ -225,9 +272,32 @@ export default function EnhancedTable(props: any) {
         button: "",
       });
     });
-    console.log(newArray);
-    return newArray;
+    console.log("HERE", newArray);
+    newArray.forEach((row: any) => {
+      row.name =
+        employes.length != 0
+          ? employes[Number(row.id) - 1].data.employeName
+          : "";
+    });
+    const result = newArray.filter((data) => data.name != "");
+    return result;
   }
+
+  useEffect(() => {
+    myRows.forEach((row) => {
+      const currentDate = new Date();
+      const dateDifference = row.documents
+        ? new Date(currentDate.getTime() - row.documents[0].date.getTime())
+        : new Date();
+      const redEmployes = [];
+
+      if (dateDifference.getUTCFullYear() - 1970 >= 1) {
+        redEmployes.push(employes[Number(row.id) - 1].data);
+        props.setNumberOfExpiredDocuments(redEmployes.length);
+      }
+      props.setEmployeesInNeedOfNewDocuments(redEmployes);
+    });
+  }, [employes]);
 
   const myRows = convertMyData(props.rows);
 
@@ -299,7 +369,6 @@ export default function EnhancedTable(props: any) {
     else if (dateDifference.getUTCMonth() > 11) return "#ffff14";
     else return "#47ed5a";
   }
-
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
@@ -337,7 +406,7 @@ export default function EnhancedTable(props: any) {
                       aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.name}
-                      // selected={isItemSelected}
+                      // // selected={isItemSelected}
                     >
                       <TableCell component="th" scope="row">
                         <RemoveRedEyeIcon
@@ -367,7 +436,11 @@ export default function EnhancedTable(props: any) {
                         {row.id}
                       </TableCell>
 
-                      <TableCell align="right">{row.name}</TableCell>
+                      <TableCell align="right">
+                        {employes[0]
+                          ? employes[Number(row.id) - 1].data.employeName
+                          : ""}
+                      </TableCell>
                       <TableCell
                         align="right"
                         sx={{ color: colorRow(row.date) }}
