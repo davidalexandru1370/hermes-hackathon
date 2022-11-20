@@ -21,26 +21,36 @@ const EmployesList = () => {
       documents: [{ id: "1", title: "analize medicale", date : new Date(2018,2,3) }],
     },
     {
-      id: "1",
+      id: "2",
       name: "david",
       documents: [{ id: "1", title: "analize medicale", date: new Date(2022,1,3) }],
     },
     {
-      id: "1",
+      id: "3",
       name: "david",
       documents: [{ id: "1", title: "analize medicale", date: new Date(2022,7,23) }],
+    },
+    {
+      id: "4",
+      name: "david",
+      documents: [{ id: "1", title: "analize medicale", date: new Date(2021,11,19) }],
     },
   ];
 
   function colorRow(documentDate: Date) {
+    const green = "#90EE90";
+    const yellow = "#e67300";
+    const red = "#b30000";
     const currentDate = new Date();
     const dateDifference = new Date(currentDate.getTime() - documentDate.getTime());
+    if (currentDate < documentDate)
+      return green
     if (dateDifference.getUTCFullYear() - 1970 >= 1)
-      return "#b30000"
-    else if (dateDifference.getUTCMonth() > 6)
-      return "#e67300"
+      return red
+    else if (dateDifference.getUTCMonth() >= 11)
+      return yellow
     else
-      return "#90EE90"
+      return green
 
   }
 
