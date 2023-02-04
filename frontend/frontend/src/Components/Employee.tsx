@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, CardHeader, CardMedia, Chip, Typography } from '@mui/material'
 import React from 'react'
+import { IEmployee } from '../Model/IEmployee'
 
 
 function ContentOfHeader (props:any) {
@@ -9,10 +10,10 @@ function ContentOfHeader (props:any) {
     display: 'flex',
   }}>
             <Chip sx = {{
-              backgroundColor: props.employesInNeedOfNewDocuments.some((employee:any) => employee.employeId == props.employee.data.employeId) ? 'red' : 'green',
+              backgroundColor: props.employesInNeedOfNewDocuments.some((employee:IEmployee) => employee.data.employeId == props.employee.data.employeId) ? 'red' : 'green',
               color: "#fff",
               marginLeft: "auto",
-            }} label= {props.employesInNeedOfNewDocuments.some((employee:any) => employee.employeId == props.employee.data.employeId) ? 'Out of Date' : 'Up to Date'}></Chip>  
+            }} label= {props.employesInNeedOfNewDocuments.some((employee:IEmployee) => employee.data.employeId == props.employee.data.employeId) ? 'Out of Date' : 'Up to Date'}></Chip>  
 </Box>  
   )
 }
@@ -23,7 +24,7 @@ export default function Employee(props:any) {
       <Card sx = {{
         width: "240px",
         margin: "32px 16px",
-      }}>
+      }} variant="outlined">
 
         <CardHeader title = {<ContentOfHeader employesInNeedOfNewDocuments = {props.employesInNeedOfNewDocuments} employee = {props.employee}/>} >
           

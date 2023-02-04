@@ -24,8 +24,14 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { IEmployee } from '../Model/IEmployee';
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import { useEffect, useState } from 'react'
-import {db, deleteDataFromEmployes} from '../Firebase'
+import {db, deleteDataFromEmployes, deleteMedicalFile, downloadData} from '../Firebase'
 import { getFirestore, collection, getDocs, setDoc, getDoc, doc,deleteDoc, addDoc } from 'firebase/firestore/lite';
+import PDF1 from '../Persistance/1.pdf';
+import PDF2 from '../Persistance/2.pdf';
+import PDF3 from '../Persistance/3.pdf';
+import PDF4 from '../Persistance/4.pdf';
+
+
 
 interface Data {
   id: number;
@@ -52,6 +58,8 @@ const rows = [
   createData(3, "John Doe", new Date(2022, 5, 12), ""),
   createData(4, "Will Smith", new Date(2020, 5, 17), ""),
 ];
+
+
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -218,8 +226,6 @@ export default function EnhancedTable(props:any) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  console.log(props.rows[0] ? props.rows[0].documents[0] : null)
-
   interface Iemployes {
     data: {
       employeId: string;
@@ -239,18 +245,14 @@ export default function EnhancedTable(props:any) {
     const namesArray:any = []
     const querySnapshot = await getDocs(collection(db, "employes"));
     querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data())
       
       storingArray.push({data: doc.data(),
       id: doc.id,
       })
       namesArray.push(doc.data().employeName)
-      console.log("piece of shit",doc.data())
     })
-    console.log("WTF", storingArray)
     setEmployes(storingArray)
     setEmployesNames(namesArray)
-    console.log("????",employes)
   })
   useEffect(() => {
     getAllDataFromEmployes()
@@ -267,7 +269,6 @@ export default function EnhancedTable(props:any) {
         button: ''
       })
     })
-    console.log("HERE", newArray)
     newArray.forEach((row:any) => { 
       row.name = employes.length != 0 ? employes[Number(row.id)-1].data.employeName : ''
     })
@@ -275,23 +276,29 @@ export default function EnhancedTable(props:any) {
     return result
   }
 
-   useEffect(() =>{
-    myRows.forEach(row => {
-      const currentDate = new Date();
-      const dateDifference = row.documents ? new Date(currentDate.getTime() - row.documents[0].date.getTime()) : new Date();
-      const redEmployes = []
+  //  useEffect(() =>{
+  //   myRows.forEach(row => {
+  //     const currentDate = new Date();
+  //     const dateDifference = row.documents ? new Date(currentDate.getTime() - row.documents[0].date.getTime()) : new Date();
+  //     const redEmployes = []
 
-      if (dateDifference.getUTCFullYear() - 1970 >= 1) {
+  //     if (dateDifference.getUTCFullYear() - 1970 >= 1) {
         
-        redEmployes.push(employes[Number(row.id)-1].data)
-        props.setNumberOfExpiredDocuments(redEmployes.length)
-      }
-      props.setEmployeesInNeedOfNewDocuments(redEmployes)
-    })
-  }, [employes])
+  //       redEmployes.push(employes[Number(row.id)-1].data)
+  //       props.setNumberOfExpiredDocuments(redEmployes.length)
+  //     }
+  //     props.setEmployeesInNeedOfNewDocuments(redEmployes)
+  //   })
+  // }, [employes])
 
-  const myRows = convertMyData(props.rows)
-
+  // const myRows = convertMyData(props.rows)
+  const myRows:any = [] 
+  const PDFS : {[key: string]: string } = {
+    '1': PDF1,
+    '2': PDF2,
+    '3': PDF3,
+    '4': PDF4
+  }
 
   
 
@@ -384,9 +391,11 @@ export default function EnhancedTable(props:any) {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
               rows.sort(getComparator(order, orderBy)).slice() */}
+
+
               {myRows.sort(getComparator(order, orderBy)).slice()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
+                .map((row:any, index:any) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -403,12 +412,7 @@ export default function EnhancedTable(props:any) {
                   <TableCell component="th" scope="row">
                     <RemoveRedEyeIcon
                       onClick={() => {
-                                             console.log("aici");
-                                             window.open(
-                                               `${`http://127.0.0.1:8080/${row.id}.pdf`}`,
-                                               "_blank",
-                                               "fullscreen=yes"
-                                             );
+                                             downloadData(row.id);
                                          }}
                       sx={{
                         "&:hover": {
@@ -435,8 +439,7 @@ export default function EnhancedTable(props:any) {
                       <TableCell component="th" scope="row">
                     <DoNotDisturbOnIcon
                       onClick={async () => {
-                                            const name: string = `${row.id}.pdf`;
-                                            await props.deleteDocument(name);
+                                            deleteMedicalFile(row.id);
                                             props.setRefetch(props.reFetch + 1);
                                           }}
                       sx={{
@@ -466,7 +469,7 @@ export default function EnhancedTable(props:any) {
         <TablePagination
           rowsPerPageOptions={[5, 8]}
           component="div"
-          count={myRows.length}
+          count={2}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

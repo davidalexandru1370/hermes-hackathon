@@ -12,37 +12,46 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { DashboardPage } from "./pages/DashboardPage/DashboardPage";
 import { User } from "./Model/User";
+import { logInUser } from "./Firebase";
 
 function App() {
+  // const login = async () => {
+  //   let user: User = {
+  //     email: email,
+  //     password: password,
+  //   };
+  //   await fetch("https://localhost:7203/api/user/login", {
+  //     body: JSON.stringify(user),
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-type": "application/json",
+  //       "Access-Control-Allow-Origin": "*",
+  //     },
+  //   })
+  //     .then(async (response) => {
+  //       if ((await response).status >= 400) {
+  //         throw Error();
+  //       }
+  //       return await response.json();
+  //     })
+  //     .then((token) => {
+  //       setErrors("");
+  //       localStorage.setItem("token", token);
+  //       navigate("/dashboard");
+  //     })
+  //     .catch((error) => {
+  //       setErrors("Email or password does not exists!");
+  //     });
+  // };
+  
   const login = async () => {
-    let user: User = {
-      email: email,
-      password: password,
-    };
-    await fetch("https://localhost:7203/api/user/login", {
-      body: JSON.stringify(user),
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-      .then(async (response) => {
-        if ((await response).status >= 400) {
-          throw Error();
-        }
-        return await response.json();
-      })
-      .then((token) => {
-        setErrors("");
-        localStorage.setItem("token", token);
-        navigate("/dashboard");
-      })
-      .catch((error) => {
-        setErrors("Email or password does not exists!");
-      });
-  };
+    const user:any = await logInUser(email, password)
+    if(user) {
+      navigate("/dashboard");
+    }
+  }
+
 
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");

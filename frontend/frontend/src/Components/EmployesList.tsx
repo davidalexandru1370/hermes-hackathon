@@ -15,7 +15,7 @@ import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
 import EnhancedTable from "./CustomTable"
 // const d = new Date(2018, 11, 24, 10, 33, 30, 0);
 
-const EmployesList = (props:any) => {
+const EmployesList = (props:any) => { 
   const [rows, setRows] = useState<IEmployee[]>([]);
 
   const [reFetch, setRefetch] = useState<number>(0);
@@ -37,127 +37,37 @@ const EmployesList = (props:any) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  const getAllDocuments = async () => {
-    // await fetch("https://localhost:7203/api/document/getall")
-    //   .then(async (resp) => {
-    //     return resp.json();
-    //   })
-      // .then(
-        let doc: string[] = ["1.pdf", "2.pdf","3.pdf","4.pdf"]
-        let today: Date = new Date();
-        setRows(
-          doc.map((d: string) => {
-            let dateCopy: Date = new Date(today.getTime());
-            const mock: IEmployee = {
-              id: "http://127.0.0.1:8080/" + d,
-              name: "david",
-              documents: [
-                {
-                  date: dateCopy,
-                  id: "http://127.0.0.1:8080/" + d,
-                  title: d,
-                },
-              ],
-            };
-            today.setMonth(today.getMonth() - 4);
-            return mock;
+  // const getAllDocuments = async () => {
+  //       let doc: string[] = ["1.pdf", "2.pdf","3.pdf","4.pdf"]
+  //       let today: Date = new Date();
+  //       setRows(
+  //         doc.map((d: string) => {
+  //           let dateCopy: Date = new Date(today.getTime());
+  //           const mock: IEmployee = {
+  //             id: "http://127.0.0.1:8080/" + d,
+  //             name: "david",
+  //             documents: [
+  //               {
+  //                 date: dateCopy,
+  //                 id: "http://127.0.0.1:8080/" + d,
+  //                 title: d,
+  //               },
+  //             ],
+  //           };
+  //           today.setMonth(today.getMonth() - 4);
+  //           return mock;
           
       
-      }));
-  };
+  //     }));
+  // };
 
-  useEffect(() => {
-    getAllDocuments();
-  }, [reFetch]);
-
-  function colorRow(documentDate: Date) {
-    const currentDate = new Date();
-    const dateDifference = new Date(
-      currentDate.getTime() - documentDate.getTime()
-    );
-    if (dateDifference.getUTCFullYear() - 1970 >= 1) return "#b30000";
-    else if (dateDifference.getUTCMonth() > 11) return "#e67300";
-    else return "#90EE90";
-  }
+  // useEffect(() => {
+  //   getAllDocuments();
+  //   props.getAllDataFromEmployes()
+  // }, [reFetch]);
 
   return (
-    <EnhancedTable rows = {rows} deleteDocument = {deleteDocument} setRefetch = {setRefetch} reFetch = {reFetch} numberOfExpiredDocuments = {props.numberOfExpiredDocuments} setNumberOfExpiredDocuments = {props.setNumberOfExpiredDocuments} employesInNeedOfNewDocuments = {props.employesInNeedOfNewDocuments} setEmployeesInNeedOfNewDocuments = {props.setEmployeesInNeedOfNewDocuments}></EnhancedTable>
-    // <TableContainer component={Paper} sx={{ maxWidth: "100%" }}>
-    //   <Table sx={{ minWidth: 650, maxWidth: "100%" }} aria-label="simple table">
-    //     <TableHead>
-    //       <TableRow style={{ backgroundColor: "gray" }}>
-    //         <TableCell></TableCell>
-    //         <TableCell align="right">
-    //           <Typography>Name</Typography>
-    //         </TableCell>
-    //         <TableCell align="right">
-    //           <Typography>Document name</Typography>
-    //         </TableCell>
-    //         <TableCell align="right">
-    //           <Typography>Date</Typography>
-    //         </TableCell>
-    //         <TableCell></TableCell>
-    //       </TableRow>
-    //     </TableHead>
-    //     <TableBody>
-    //       {rows.map(
-    //         (row) =>
-    //           row.documents !== undefined && (
-    //             <TableRow
-    //               key={row.name}
-    //               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-    //               style={{
-    //                 backgroundColor: `${colorRow(row.documents[0].date)}`,
-    //               }}
-    //             >
-    //               <TableCell component="th" scope="row">
-    //                 <RemoveRedEyeIcon
-    //                   onClick={() => {
-    //                     console.log("aici");
-    //                     window.open(
-    //                       `${row.documents![0].id}`,
-    //                       "_blank",
-    //                       "fullscreen=yes"
-    //                     );
-    //                   }}
-    //                   sx={{
-    //                     "&:hover": {
-    //                       backgroundColor: "gray",
-    //                       borderRadius: "20px",
-    //                       cursor: "pointer",
-    //                     },
-    //                   }}
-    //                 />
-    //               </TableCell>
-    //               <TableCell align="right">{row.name}</TableCell>
-    //               <TableCell align="right">{row.documents[0].title}</TableCell>
-    //               <TableCell align="right">
-    //                 {row.documents[0].date.toLocaleDateString("en-UK")}
-    //               </TableCell>
-    //               <TableCell align="right">
-    //                 <DoNotDisturbOnIcon
-    //                   sx={{
-    //                     "&:hover": {
-    //                       backgroundColor: "gray",
-    //                       borderRadius: "50px",
-    //                       cursor: "pointer",
-    //                     },
-    //                   }}
-    //                   onClick={async () => {
-    //                     const name: string = row
-    //                       .documents![0].id.split("/")
-    //                       .slice(-1)[0];
-    //                     await deleteDocument(name);
-    //                     setRefetch(reFetch + 1);
-    //                   }}
-    //                 />
-    //               </TableCell>
-    //             </TableRow>
-    //           )
-    //       )}
-    //     </TableBody>
-    //   </Table>
-    // </TableContainer>
+    <EnhancedTable rows = {rows} deleteDocument = {deleteDocument} setRefetch = {setRefetch} reFetch = {reFetch}></EnhancedTable>
   );
 };
 

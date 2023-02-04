@@ -1,7 +1,9 @@
-import { Document } from "./Document";
-
 export interface IEmployee {
-  id: string;
-  name: string;
-  documents?: Document[];
+  data: {
+    employeId: string;
+    employeName: string;
+    employeStartDate: Date;
+    employeDepartment: string
+  },
+  id: string
 }

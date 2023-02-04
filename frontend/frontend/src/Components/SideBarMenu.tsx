@@ -1,5 +1,5 @@
 import { getFirestore, collection, getDocs, setDoc, getDoc, doc,deleteDoc, addDoc } from 'firebase/firestore/lite';
-import { Avatar, Button, createTheme, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tab, Tabs, ThemeProvider, Toolbar, Typography } from '@mui/material'
+import { Avatar, Button, createTheme, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Tab, Table, Tabs, ThemeProvider, Toolbar, Typography } from '@mui/material'
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import PersonIcon from '@mui/icons-material/Person';
@@ -13,7 +13,7 @@ import '../Fonts/Lato-Light.ttf';
 import '../Fonts/Lato-Bold.ttf';
 import '../Fonts/Lato-Black.ttf';
 import EmployesList from './EmployesList';
-import {db, deleteDataFromEmployes} from '../Firebase'
+import {db, deleteDataFromEmployes, getAllEmployeeData, getEmployeDocuments} from '../Firebase'
 import CustomTable from './CustomTable';
 import avatar1 from '../Imgs/avatar1.jpg';
 import avatar2 from '../Imgs/avatar2.jpg';
@@ -24,29 +24,12 @@ import { IEmployee } from '../Model/IEmployee';
 import Employee from './Employee';
 import EmployeeRed from './EmployeeRed';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import PDF1 from "../Persistance/1.pdf"
+import BasicTable from './BasicTable';
+import { employeDocumentsContext } from '../Context/EmployeContext';
+import { myEmployeDocument } from '../Model/myEmployeDocument';
 
 const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5]
-
-const drawerWidth = 240
-
-const CustomizedDrawer = styled(Drawer)`
-  background-color: #1C212D;
-`;
-// const theme = createTheme({
-//   typography: {
-//     fontFamily: 'Oswald, Roboto',
-//   },
-//   components: {
-//     MuiCssBaseline: {
-//       styleOverrides:`
-//       @font-face{
-//         font-family: 'Oswald'
-//         src: loca('Oswald'), local('Oswald'), url('../Fonts/Oswald-VariableFont_wght.ttf') format('truetype)
-//       } 
-//       `
-//     }
-//   }
-// })
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -82,8 +65,6 @@ function a11yProps(index: number) {
 }
 
 export default function SideBarMenu() {
-
-  const [openMenu, setOpenMenu] = useState("Dashboard")
   const [value, setValue] = useState(0)
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -93,58 +74,76 @@ export default function SideBarMenu() {
     setValue(2)
   }
 
-  const [employes, setEmployes] = useState([])
-  
 
-   const getAllDataFromEmployes = (async () => { 
-    const storingArray:any = []
-    const querySnapshot = await getDocs(collection(db, "employes"));
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data())
-      storingArray.push({data: doc.data(),
-      id: doc.id,
-      })
-    })
-    setEmployes(storingArray)
-  })
-  useEffect(() => {
-    getAllDataFromEmployes()
-  }, [])
+  const [employees, setEmployees] = useState<IEmployee[]>([])
+  const [numberOfExpiredDocuments, setNumberOfExpiredDocuments] = useState(0)
+  const [employesInNeedOfNewDocuments, setEmployeesInNeedOfNewDocuments] = useState<IEmployee[]>([])
+  const [rows,setRows] = useState<any>([]);
+  const [employeDocuments, setEmployeDocuments] = useState<myEmployeDocument[]>([]);
 
-  const deleteEmploye = (id:any) => {
-    const newArray:any = employes.filter((e:any) => e.id !== id)
-    deleteDataFromEmployes(id)
-    setEmployes(newArray)
+  function getMonthDifference(startDate:Date, endDate:Date) {
+    return (
+      endDate.getMonth() -
+      startDate.getMonth() +
+      12 * (endDate.getFullYear() - startDate.getFullYear())
+    );
   }
 
-    const rows: IEmployee[] = [
-    {
-      id: "1",
-      name: "David",
-      documents: [{ id: "1", title: "Analize medicale", date : new Date(2018,2,3) }],
-    },
-    {
-      id: "1",
-      name: "David",
-      documents: [{ id: "1", title: "Analize medicale", date: new Date(2022,1,3) }],
-    },
-    {
-      id: "1",
-      name: "David",
-      documents: [{ id: "1", title: "Analize medicale", date: new Date(2022,7,23) }],
-    },
-  ];
+  const getDocumentsData = async()=>{
+    const test:myEmployeDocument[] = []
+    await getEmployeDocuments(test)
+    setEmployeDocuments(test)
+  }
 
-  const [numberOfExpiredDocuments, setNumberOfExpiredDocuments] = useState(0)
-  const [employesInNeedOfNewDocuments, setEmployeesInNeedOfNewDocuments] = useState([])
-  console.log("RED EMPLOYES",employesInNeedOfNewDocuments)
+  const getEmployeeData = async()=>{
+    const test:IEmployee[] = [];
+    await getAllEmployeeData(test)
+    setEmployees(test)
+  }
+  useEffect(()=>{
+    
 
-  console.log(numberOfExpiredDocuments)
+
+
+    getEmployeeData()
+    getDocumentsData()
+    
+    
+  }, [])
+
+  let getEmployeeByName = (name:string) => {
+    let myEmployee:IEmployee = {
+      data: {
+        employeId: "",
+        employeName: "",
+        employeStartDate: new Date(),
+        employeDepartment: ""
+      },
+      id: ""
+    }
+    employees.forEach((employee:IEmployee) => {
+      if (employee.data.employeName === name)
+        myEmployee = employee
+    });
+    return myEmployee
+  }
+
+  useEffect(()=>{
+    setRows(employeDocuments);
+    let expirees:IEmployee[] = []
+    rows.forEach((row:myEmployeDocument) => {
+      if(getMonthDifference(row.date, new Date()) >= 6) {
+        let employee:IEmployee = getEmployeeByName(row.name)
+        expirees.push(employee)
+      }
+    });
+    setEmployeesInNeedOfNewDocuments(expirees)
+    setNumberOfExpiredDocuments(expirees.length)
+  }, [employeDocuments])
+
 
   return (
     <>
-    {/* <ThemeProvider theme={theme}>
-    <CssBaseline></CssBaseline> */}
     <Box sx= {{
       display: 'flex',
       height: '100vh',
@@ -156,7 +155,7 @@ export default function SideBarMenu() {
         padding: '16px 32px',
         color: "#fff"
       }}>
-      <Typography data-end="5" sx={{
+      <Typography data-end="E" sx={{
         fontWeight: 'bold',
         '&::first-letter' : {
           color: '#FFD831'
@@ -165,7 +164,7 @@ export default function SideBarMenu() {
           content: 'attr(data-end)',
           color: '#FFD831',  
         }
-      }} variant = "h3" ml="auto" mr="auto" pt="16px" pb="16px">Vicious</Typography>
+      }} variant = "h3" ml="auto" mr="auto" pt="16px" pb="16px">HealthE</Typography>
       <Tabs textColor = "inherit" orientation='vertical' value={value} onChange={handleChange} sx={{
         height: '100vh',
         margin: '0 -32px',
@@ -247,7 +246,6 @@ export default function SideBarMenu() {
         <Box sx={{
           display: 'flex',
         }}>
-          {/* <Avatar src={avatar1} ></Avatar> */}
           <Typography pl="24px" mt="24px">You have <span style = {{color: `${numberOfExpiredDocuments > 0 ? 'red' : 'inherit'}`}}>{numberOfExpiredDocuments}</span> employees in need of medical checkups</Typography>
           <Typography color="red" pl="4px" mt="24px" onClick={handleClick} sx ={{
             textDecoration: 'underline',
@@ -256,22 +254,18 @@ export default function SideBarMenu() {
         </Box>
 
         <TabPanel value = {value} index={0}>
-          <EmployesList numberOfExpiredDocuments = {numberOfExpiredDocuments} setNumberOfExpiredDocuments = {setNumberOfExpiredDocuments} employesInNeedOfNewDocuments ={employesInNeedOfNewDocuments} setEmployeesInNeedOfNewDocuments = {setEmployeesInNeedOfNewDocuments}/>
-          {/* <CustomTable></CustomTable> */}
+          <BasicTable rows = {rows} employees = {employees} getEmployeeData = {getEmployeeData} getDocumentsData = {getDocumentsData}></BasicTable>
         </TabPanel>
+
         <TabPanel value = {value} index={1}>
         <Box  sx = {{
           display: "flex",
           flexWrap: "wrap",
         }}>
-         {employes.map
-         ((employee:any) =>
+         {employees.map
+         ((employee:IEmployee) =>
          (<>
           <Employee employesInNeedOfNewDocuments = {employesInNeedOfNewDocuments} avatar = {avatars[Number(employee.data.employeId)-1]} employee = {employee}></Employee>
-          {/* <h2>{employee.data.employeId}</h2>
-          <h2>{employee.data.employeName}</h2>
-          <h2>{employee.data.employeDepartment}</h2>
-          <h2>{employee.data.employeStartDate.toDate().toDateString()}</h2> */}
           </>
          )
          
@@ -287,13 +281,9 @@ export default function SideBarMenu() {
           flexWrap: "wrap",
         }}>
          {employesInNeedOfNewDocuments.map
-         ((employee:any) =>
+         ((employee:IEmployee) =>
          (<>
-          <EmployeeRed employee = {employee} avatar = {avatars[Number(employee.employeId)-1]}></EmployeeRed>
-          {/* <h2>{employee.data.employeId}</h2>
-          <h2>{employee.data.employeName}</h2>
-          <h2>{employee.data.employeDepartment}</h2>
-          <h2>{employee.data.employeStartDate.toDate().toDateString()}</h2> */}
+          <EmployeeRed employesInNeedOfNewDocuments = {employesInNeedOfNewDocuments} employee = {employee} avatar = {avatars[Number(employee.data.employeId)-1]}></EmployeeRed>
           </>
          )
          

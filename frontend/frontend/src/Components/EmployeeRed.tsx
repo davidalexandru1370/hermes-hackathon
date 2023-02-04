@@ -1,5 +1,6 @@
 import React from 'react'
 import { Box, Card, CardContent, CardHeader, CardMedia, Chip, Typography } from '@mui/material'
+import Employee from './Employee'
 
 function ContentOfHeader (props:any) {
 
@@ -17,59 +18,64 @@ function ContentOfHeader (props:any) {
 }
 
 
-export default function EmployeeRed(props:any) {
-  console.log(props.employee)
-  return (
-    <div><Card sx = {{
-      width: "240px",
-      margin: "32px 16px",
-    }}>
+// export default function EmployeeRed(props:any) {
+//   return (
+//     <div><Card sx = {{
+//       width: "240px",
+//       margin: "32px 16px",
+//     }}>
 
-      {/* <CardHeader title = {<ContentOfHeader employesInNeedOfNewDocuments = {props.employesInNeedOfNewDocuments} employee = {props.employee}/>} >
+//       {/* <CardHeader title = {<ContentOfHeader employesInNeedOfNewDocuments = {props.employesInNeedOfNewDocuments} employee = {props.employee}/>} >
         
-      </CardHeader> */}
+//       </CardHeader> */}
 
-      <CardMedia component="img"
-      image= {props.avatar}
-      height = "120px"
-      sx = {{
-        width: "120px",
-        borderRadius: "50%",
-        margin: "12px auto"
-      }}
-      >
-      </CardMedia>
-      <CardContent>
-        <Box>
-          <Typography align="center" sx={{
-            fontWeight: "bold"
-          }}>{props.employee.employeName}</Typography>
-          <Typography align="center" variant="body2" sx = {{ 
-            opacity: "0.7"
-          }}>{props.employee.employeDepartment}</Typography>
-        </Box>
-        <Box mt="12px" sx = {{
-          backgroundColor: "#C7CED7",
-          margin: "8px -10px",
-          padding: "8px 0",
-          borderRadius: "6px"
-        }}>
-          <Box sx = {{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-          }}>
-            <Typography variant="subtitle1" sx={{
-            paddingRight: "12px",
-          }}>Date Hired</Typography>
-            <Typography variant="subtitle1">{props.employee.employeStartDate.toDate().toLocaleDateString('en-UK')}</Typography>
-          </Box>
+//       <CardMedia component="img"
+//       image= {props.avatar}
+//       height = "120px"
+//       sx = {{
+//         width: "120px",
+//         borderRadius: "50%",
+//         margin: "12px auto"
+//       }}
+//       >
+//       </CardMedia>
+//       <CardContent>
+//         <Box>
+//           <Typography align="center" sx={{
+//             fontWeight: "bold"
+//           }}>{props.employee.employeName}</Typography>
+//           <Typography align="center" variant="body2" sx = {{ 
+//             opacity: "0.7"
+//           }}>{props.employee.employeDepartment}</Typography>
+//         </Box>
+//         <Box mt="12px" sx = {{
+//           backgroundColor: "#C7CED7",
+//           margin: "8px -10px",
+//           padding: "8px 0",
+//           borderRadius: "6px"
+//         }}>
+//           <Box sx = {{
+//             display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center"
+//           }}>
+//             <Typography variant="subtitle1" sx={{
+//             paddingRight: "12px",
+//           }}>Date Hired</Typography>
+//             <Typography variant="subtitle1">{props.employee.data.employeStartDate.toDate().toLocaleDateString('en-UK')}</Typography>
+//           </Box>
 
           
-        </Box>
+//         </Box>
 
         
-      </CardContent>
-    </Card></div>
+//       </CardContent>
+//     </Card></div>
+//   )
+// }
+
+export default function EmployeeRed(props:any) {
+  return (
+    <Employee employesInNeedOfNewDocuments = {props.employesInNeedOfNewDocuments} avatar = {props.avatar} employee = {props.employee}></Employee>
   )
 }
